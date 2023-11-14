@@ -2,6 +2,7 @@ from django.http import Http404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from diary.models import Record as DiaryRecord
 from diary.serializers import DiaryRecordSerializer
 
@@ -24,7 +25,7 @@ class DiaryRecordDetails(APIView):
         try:
             return DiaryRecord.objects.get(pk=pk)
         except DiaryRecord.DoesNotExist:
-            raise Http404
+            raise NotFound(detail="Record not found")
     
     def get(self, request, pk, format=None):
         record = self.get_object(pk)

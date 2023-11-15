@@ -5,11 +5,15 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from diary.models import Record as DiaryRecord
 from diary.serializers import DiaryRecordSerializer
+from datetime import datetime
 
 # Create your views here.
 class DiaryRecordList(APIView):    
     def get(self, request):
-        records = DiaryRecord.objects.all().order_by('timestamp')
+        now = datetime.now()
+        year = request.query_params.get("year", now.year)
+        month = request.query_params.get("month", now.month)
+        records = DiaryRecord.objects.filter(timestamp__year=year, timestamp__month=month).order_by('timestamp')
         serializer = DiaryRecordSerializer(records, many=True)
         return Response(serializer.data)
     
